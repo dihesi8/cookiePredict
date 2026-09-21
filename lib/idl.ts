@@ -102,6 +102,31 @@ export const IDL = {
       ],
       args: [],
     },
+    {
+      name: "createProfile",
+      discriminator: [225, 205, 234, 143, 17, 186, 50, 220],
+      accounts: [
+        { name: "user", isMut: true, isSigner: true },
+        { name: "profile", isMut: true, isSigner: false },
+        { name: "systemProgram", isMut: false, isSigner: false },
+      ],
+      args: [
+        { name: "nickname", type: "string" },
+        { name: "pfpUrl", type: "string" },
+      ],
+    },
+    {
+      name: "updateProfile",
+      discriminator: [98, 67, 99, 206, 86, 115, 175, 1],
+      accounts: [
+        { name: "user", isMut: false, isSigner: true },
+        { name: "profile", isMut: true, isSigner: false },
+      ],
+      args: [
+        { name: "nickname", type: "string" },
+        { name: "pfpUrl", type: "string" },
+      ],
+    },
   ],
   accounts: [
     {
@@ -115,6 +140,10 @@ export const IDL = {
     {
       name: "Challenge",
       discriminator: [119, 250, 161, 121, 119, 81, 22, 208],
+    },
+    {
+      name: "UserProfile",
+      discriminator: [32, 37, 119, 205, 179, 180, 13, 194],
     },
   ],
 } as const;

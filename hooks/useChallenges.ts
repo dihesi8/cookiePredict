@@ -5,7 +5,7 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { ChallengeAccount, getUserChallenges } from "../lib/program";
 import { PublicKey } from "@solana/web3.js";
 
-const POLL_MS = 6000;
+const POLL_MS = 15000;
 
 export interface ChallengeRow {
   pubkey: PublicKey;

@@ -44,6 +44,10 @@ export function challengePda(
   );
 }
 
+export function profilePda(user: PublicKey): [PublicKey, number] {
+  return PublicKey.findProgramAddressSync([Buffer.from("profile"), user.toBuffer()], PROGRAM_ID);
+}
+
 // ---------- Instruction builders ----------
 
 export function createMarketIx(
@@ -206,6 +210,51 @@ export function settleChallengeIx(
       { pubkey: winner, isSigner: false, isWritable: true },
       { pubkey: market, isSigner: false, isWritable: false },
       { pubkey: challenge, isSigner: false, isWritable: true },
+    ],
+    data,
+  });
+}
+
+export function createProfileIx(
+  user: PublicKey,
+  nickname: string,
+  pfpUrl: string
+): TransactionInstruction {
+  const [profile] = profilePda(user);
+  const data = new BinaryWriter()
+    .bytes(Buffer.from(ix("createProfile").discriminator))
+    .string(nickname)
+    .string(pfpUrl)
+    .toBuffer();
+
+  return new TransactionInstruction({
+    programId: PROGRAM_ID,
+    keys: [
+      { pubkey: user, isSigner: true, isWritable: true },
+      { pubkey: profile, isSigner: false, isWritable: true },
+      { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+    ],
+    data,
+  });
+}
+
+export function updateProfileIx(
+  user: PublicKey,
+  nickname: string,
+  pfpUrl: string
+): TransactionInstruction {
+  const [profile] = profilePda(user);
+  const data = new BinaryWriter()
+    .bytes(Buffer.from(ix("updateProfile").discriminator))
+    .string(nickname)
+    .string(pfpUrl)
+    .toBuffer();
+
+  return new TransactionInstruction({
+    programId: PROGRAM_ID,
+    keys: [
+      { pubkey: user, isSigner: true, isWritable: false },
+      { pubkey: profile, isSigner: false, isWritable: true },
     ],
     data,
   });
@@ -380,4 +429,40 @@ function bs58Encode(buf: Buffer): string {
   for (let k = 0; buf[k] === 0 && k < buf.length - 1; k++) result += ALPHABET[0];
   for (let q = digits.length - 1; q >= 0; q--) result += ALPHABET[digits[q]];
   return result;
+}
+
+export interface UserProfileAccount {
+  owner: PublicKey;
+  nickname: string;
+  pfpUrl: string;
+  bump: number;
+}
+
+export function decodeUserProfile(data: Buffer): UserProfileAccount {
+  const r = new BinaryReader(data).skip(8);
+  const owner = new PublicKey(r.pubkeyBytes());
+  const nickname = r.string();
+  const pfpUrl = r.string();
+  const bump = r.u8();
+  return { owner, nickname, pfpUrl, bump };
+}
+
+export async function getProfile(
+  connection: Connection,
+  user: PublicKey
+): Promise<UserProfileAccount | null> {
+  const [pda] = profilePda(user);
+  const info = await connection.getAccountInfo(pda);
+  return info ? decodeUserProfile(info.data) : null;
+}
+
+export async function getAllProfiles(
+  connection: Connection
+): Promise<{ pubkey: PublicKey; account: UserProfileAccount }[]> {
+  const accounts = await connection.getProgramAccounts(PROGRAM_ID, {
+    filters: [
+      { memcmp: { offset: 0, bytes: bs58Encode(Buffer.from(IDL.accounts[3].discriminator)) } },
+    ],
+  });
+  return accounts.map((a) => ({ pubkey: a.pubkey, account: decodeUserProfile(a.account.data) }));
 }

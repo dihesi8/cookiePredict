@@ -1,6 +1,7 @@
 "use client";
 
 import { FC, useState } from "react";
+import { Brain, TrendingUp, TrendingDown } from "lucide-react";
 
 interface Analysis {
   summary: string;
@@ -45,7 +46,9 @@ export const AIAnalyst: FC<{ question: string; category: string; yesPct: number;
   return (
     <div className="card">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-        <div style={{ fontSize: 13, fontWeight: 650 }}>🤖 AI Market Analyst</div>
+        <div className="icon-row" style={{ fontSize: 13, fontWeight: 650 }}>
+          <Brain size={15} color="var(--gold)" /> AI Market Analyst
+        </div>
         {state.kind !== "loading" && (
           <button onClick={analyze} className="btn btn-primary" style={{ padding: "6px 12px", fontSize: 12 }}>
             {state.kind === "done" ? "Re-analyze" : "Analyze"}
@@ -55,7 +58,7 @@ export const AIAnalyst: FC<{ question: string; category: string; yesPct: number;
 
       {state.kind === "idle" && (
         <div className="empty-note">
-          Get an AI-generated read on this market — summary, bullish/bearish factors, and an estimated
+          Get an AI-generated read on this market: summary, bullish/bearish factors, and an estimated
           probability. Informational only, not financial advice.
         </div>
       )}
@@ -67,13 +70,17 @@ export const AIAnalyst: FC<{ question: string; category: string; yesPct: number;
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
             <div>
-              <div style={{ color: "var(--yes)", fontWeight: 650, marginBottom: 4 }}>Bullish (YES)</div>
+              <div className="icon-row" style={{ color: "var(--yes)", fontWeight: 650, marginBottom: 4 }}>
+                <TrendingUp size={13} /> Bullish (YES)
+              </div>
               <ul style={{ margin: 0, paddingLeft: 16, color: "var(--text-dim)" }}>
                 {state.data.bullish?.map((b, i) => <li key={i}>{b}</li>)}
               </ul>
             </div>
             <div>
-              <div style={{ color: "var(--no)", fontWeight: 650, marginBottom: 4 }}>Bearish (NO)</div>
+              <div className="icon-row" style={{ color: "var(--no)", fontWeight: 650, marginBottom: 4 }}>
+                <TrendingDown size={13} /> Bearish (NO)
+              </div>
               <ul style={{ margin: 0, paddingLeft: 16, color: "var(--text-dim)" }}>
                 {state.data.bearish?.map((b, i) => <li key={i}>{b}</li>)}
               </ul>
@@ -98,7 +105,7 @@ export const AIAnalyst: FC<{ question: string; category: string; yesPct: number;
           </div>
 
           <div style={{ fontSize: 10.5, color: "var(--text-faint)", borderTop: "1px solid var(--border-soft)", paddingTop: 8 }}>
-            AI-generated from general knowledge only (no live news access). Informational only — not
+            AI-generated from general knowledge only (no live news access). Informational only, not
             financial advice, and does not affect market resolution.
           </div>
         </div>

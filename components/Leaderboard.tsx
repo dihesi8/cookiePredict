@@ -1,59 +1,78 @@
 "use client";
 
 import { FC } from "react";
+import { Flame, User } from "lucide-react";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { useLeaderboard } from "../hooks/useLeaderboard";
+import { useAllProfiles } from "../hooks/useAllProfiles";
 
 function shortAddr(base58: string) {
-  return `${base58.slice(0, 4)}…${base58.slice(-4)}`;
+  return `${base58.slice(0, 4)}...${base58.slice(-4)}`;
 }
 
 export const Leaderboard: FC = () => {
   const { entries, loading } = useLeaderboard();
+  const { profiles } = useAllProfiles();
+  const { publicKey } = useWallet();
+
+  if (loading) return <div className="skeleton" style={{ height: 160 }} />;
+  if (entries.length === 0) {
+    return <div className="empty-note">No resolved positions yet. The leaderboard fills in once markets resolve.</div>;
+  }
 
   return (
-    <div className="card">
-      {loading ? (
-        <div className="empty-note">Loading leaderboard…</div>
-      ) : entries.length === 0 ? (
-        <div className="empty-note">No resolved positions yet — the leaderboard fills in once markets resolve.</div>
-      ) : (
-        entries.map((e, i) => (
-          <div
-            key={e.user.toBase58()}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              padding: "10px 0",
-              borderBottom: i < entries.length - 1 ? "1px solid var(--border-soft)" : "none",
-              fontSize: 13,
-            }}
-          >
-            <span
-              style={{
-                width: 22,
-                height: 22,
-                borderRadius: "50%",
-                background: i === 0 ? "var(--gold)" : "var(--panel-2)",
-                color: i === 0 ? "#1a1204" : "var(--text-dim)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 11,
-                fontWeight: 700,
-                flexShrink: 0,
-              }}
-            >
-              {i + 1}
-            </span>
-            <span style={{ fontWeight: 600, flex: 1 }}>{shortAddr(e.user.toBase58())}</span>
-            <span style={{ color: "var(--gold)", fontSize: 12 }}>🔥 {e.streak}</span>
-            <span style={{ color: "var(--text-dim)", fontSize: 12 }}>
-              {e.wins}W-{e.losses}L
-            </span>
-          </div>
-        ))
-      )}
+    <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+      <table className="data-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Trader</th>
+            <th>Streak</th>
+            <th>Record</th>
+          </tr>
+        </thead>
+        <tbody>
+          {entries.map((e, i) => {
+            const p = profiles.find((x) => x.account.owner.equals(e.user));
+            const isYou = publicKey?.equals(e.user);
+            return (
+              <tr key={e.user.toBase58()} className={isYou ? "is-you" : ""}>
+                <td style={{ fontWeight: 700 }}>#{i + 1}</td>
+                <td>
+                  <div className="icon-row">
+                    <div className="avatar" style={{ width: 22, height: 22 }}>
+                      {p?.account.pfpUrl ? (
+                        <img
+                          src={p.account.pfpUrl}
+                          alt=""
+                          onError={(ev) => ((ev.target as HTMLImageElement).style.display = "none")}
+                        />
+                      ) : (
+                        <User size={11} />
+                      )}
+                    </div>
+                    <span style={{ fontWeight: 600 }}>{p?.account.nickname || shortAddr(e.user.toBase58())}</span>
+                    {isYou && (
+                      <span className="tag tag-open" style={{ fontSize: 9.5, padding: "1.5px 6px" }}>
+                        YOU
+                      </span>
+                    )}
+                  </div>
+                </td>
+                <td>
+                  <span className="icon-row" style={{ color: "var(--gold)", fontWeight: 700 }}>
+                    <Flame size={13} />
+                    {e.streak}
+                  </span>
+                </td>
+                <td style={{ color: "var(--text-dim)" }}>
+                  {e.wins}W-{e.losses}L
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 };

@@ -9,6 +9,10 @@ import { MARKETS } from "../../lib/markets";
 
 const NavBar = dynamic(() => import("../../components/NavBar").then((m) => m.NavBar), { ssr: false });
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function sendIx(connection: any, publicKey: any, sendTransaction: any, ix: any) {
   const tx = new Transaction().add(ix);
   const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
@@ -17,6 +21,17 @@ async function sendIx(connection: any, publicKey: any, sendTransaction: any, ix:
   const sig = await sendTransaction(tx, connection);
   await connection.confirmTransaction({ signature: sig, blockhash, lastValidBlockHeight });
   return sig;
+}
+
+async function sendIxWithRetry(connection: any, publicKey: any, sendTransaction: any, ix: any) {
+  try {
+    return await sendIx(connection, publicKey, sendTransaction, ix);
+  } catch (e) {
+    // One retry after a short pause — covers transient RPC hiccups /
+    // rate limiting rather than a real rejection or on-chain error.
+    await sleep(1500);
+    return await sendIx(connection, publicKey, sendTransaction, ix);
+  }
 }
 
 export default function AdminPage() {
@@ -42,12 +57,16 @@ export default function AdminPage() {
         const closeTs = BigInt(Math.floor(Date.now() / 1000) + m.closeDays * 86400);
         const resolveTs = closeTs + 3600n;
         const ix = createMarketIx(publicKey, m.id, closeTs, resolveTs);
-        const sig = await sendIx(connection, publicKey, sendTransaction, ix);
-        pushLog(`✅ seeded #${m.id} (${m.category}) — ${sig.slice(0, 10)}…`);
+        const sig = await sendIxWithRetry(connection, publicKey, sendTransaction, ix);
+        pushLog(`OK: seeded #${m.id} (${m.category}), ${sig.slice(0, 10)}…`);
       } catch (e: any) {
-        pushLog(`❌ #${m.id} failed: ${e?.message ?? e}`);
+        pushLog(`FAIL: #${m.id} failed: ${e?.message ?? e}`);
       }
       setSeedProgress({ done: i + 1, total: MARKETS.length });
+      // Small pause between transactions — the public RPC rate-limits
+      // rapid back-to-back requests, which is the main cause of
+      // mid-batch failures.
+      await sleep(600);
     }
     setSeeding(false);
   }
@@ -61,9 +80,9 @@ export default function AdminPage() {
       const resolveTs = closeTs + 3600n;
       const ix = createMarketIx(publicKey, m.id, closeTs, resolveTs);
       const sig = await sendIx(connection, publicKey, sendTransaction, ix);
-      pushLog(`✅ seeded #${m.id} — ${sig.slice(0, 12)}…`);
+      pushLog(`OK: seeded #${m.id}, ${sig.slice(0, 12)}…`);
     } catch (e: any) {
-      pushLog(`❌ seed failed: ${e?.message ?? e}`);
+      pushLog(`FAIL: seed failed: ${e?.message ?? e}`);
     }
   }
 
@@ -75,21 +94,22 @@ export default function AdminPage() {
       const [market] = marketPda(m.id);
       const ix = resolveMarketIx(publicKey, market, outcome);
       const sig = await sendIx(connection, publicKey, sendTransaction, ix);
-      pushLog(`✅ resolved #${m.id} ${outcome ? "YES" : "NO"} — ${sig.slice(0, 12)}…`);
+      pushLog(`OK: resolved #${m.id} ${outcome ? "YES" : "NO"}, ${sig.slice(0, 12)}…`);
     } catch (e: any) {
-      pushLog(`❌ resolve failed: ${e?.message ?? e}`);
+      pushLog(`FAIL: resolve failed: ${e?.message ?? e}`);
     }
   }
 
   return (
-    <main className="page" style={{ maxWidth: 520 }}>
+    <>
       <NavBar />
+      <main className="page" style={{ maxWidth: 520 }}>
       <div>
         <div className="section-title" style={{ marginBottom: 4 }}>Admin / Resolver</div>
         <p style={{ fontSize: 12.5, color: "var(--text-dim)" }}>
           Trusted-resolver MVP model: whichever wallet signs create_market becomes that
           market's authority, and only that wallet can resolve it. An oracle-based resolver
-          is planned as a future upgrade — this admin panel is the interim source of truth.
+          is planned as a future upgrade. This admin panel is the interim source of truth.
         </p>
       </div>
 
@@ -134,6 +154,7 @@ export default function AdminPage() {
           <div key={i} className="log-line">{l}</div>
         ))}
       </div>
-    </main>
+      </main>
+    </>
   );
 }

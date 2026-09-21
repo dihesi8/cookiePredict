@@ -12,11 +12,12 @@ import {
   settleChallengeIx,
 } from "../lib/program";
 import { useChallenges, ChallengeRow } from "../hooks/useChallenges";
+import { useAllProfiles } from "../hooks/useAllProfiles";
 
 const LAMPORTS_PER_COOK = 1_000_000_000n;
 
 function shortAddr(base58: string) {
-  return `${base58.slice(0, 4)}…${base58.slice(-4)}`;
+  return `${base58.slice(0, 4)}...${base58.slice(-4)}`;
 }
 
 async function sendIx(connection: any, publicKey: PublicKey, sendTransaction: any, ix: any) {
@@ -29,11 +30,12 @@ async function sendIx(connection: any, publicKey: PublicKey, sendTransaction: an
   return sig;
 }
 
-const ChallengeItem: FC<{ row: ChallengeRow; question: string; onChanged: () => void }> = ({
-  row,
-  question,
-  onChanged,
-}) => {
+const ChallengeItem: FC<{
+  row: ChallengeRow;
+  question: string;
+  displayName: (pk: PublicKey) => string;
+  onChanged: () => void;
+}> = ({ row, question, displayName, onChanged }) => {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
   const { pubkey, account } = row;
@@ -100,8 +102,8 @@ const ChallengeItem: FC<{ row: ChallengeRow; question: string; onChanged: () => 
         </span>
       </div>
       <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 10 }}>
-        {shortAddr(account.creator.toBase58())} ({account.creatorSide ? "YES" : "NO"}) vs{" "}
-        {shortAddr(account.recipient.toBase58())} ({!account.creatorSide ? "YES" : "NO"}) · {amountCook.toFixed(2)} COOK each
+        {displayName(account.creator)} ({account.creatorSide ? "YES" : "NO"}) vs{" "}
+        {displayName(account.recipient)} ({!account.creatorSide ? "YES" : "NO"}) - {amountCook.toFixed(2)} COOK each
       </div>
 
       <div style={{ display: "flex", gap: 8 }}>
@@ -113,7 +115,7 @@ const ChallengeItem: FC<{ row: ChallengeRow; question: string; onChanged: () => 
               act(() => sendIx(connection, publicKey, sendTransaction, acceptChallengeIx(publicKey, pubkey)))
             }
           >
-            {busy ? "…" : "Accept"}
+            {busy ? "..." : "Accept"}
           </button>
         )}
         {canCancel && (
@@ -124,7 +126,7 @@ const ChallengeItem: FC<{ row: ChallengeRow; question: string; onChanged: () => 
               act(() => sendIx(connection, publicKey, sendTransaction, cancelChallengeIx(publicKey, pubkey)))
             }
           >
-            {busy ? "…" : "Cancel"}
+            {busy ? "..." : "Cancel"}
           </button>
         )}
         {canSettle && winner && (
@@ -137,7 +139,7 @@ const ChallengeItem: FC<{ row: ChallengeRow; question: string; onChanged: () => 
               )
             }
           >
-            {busy ? "…" : `Settle (${publicKey.equals(winner) ? "you won" : shortAddr(winner.toBase58()) + " won"})`}
+            {busy ? "..." : `Settle (${publicKey.equals(winner) ? "you won" : displayName(winner) + " won"})`}
           </button>
         )}
       </div>
@@ -153,6 +155,11 @@ export const ChallengesPanel: FC<{ marketId: bigint; marketAddress: PublicKey; q
   const { connection } = useConnection();
   const { publicKey, sendTransaction, connected } = useWallet();
   const { challenges, loading } = useChallenges();
+  const { resolveNickname, nicknameFor } = useAllProfiles();
+
+  function displayName(pk: PublicKey) {
+    return nicknameFor(pk) || shortAddr(pk.toBase58());
+  }
 
   const [recipient, setRecipient] = useState("");
   const [side, setSide] = useState(true);
@@ -165,13 +172,17 @@ export const ChallengesPanel: FC<{ marketId: bigint; marketAddress: PublicKey; q
   async function create() {
     if (!publicKey) return;
     setError(null);
-    let recipientKey: PublicKey;
-    try {
-      recipientKey = new PublicKey(recipient.trim());
-    } catch {
-      setError("Enter a valid recipient wallet address");
-      return;
+
+    let recipientKey: PublicKey | null = resolveNickname(recipient);
+    if (!recipientKey) {
+      try {
+        recipientKey = new PublicKey(recipient.trim());
+      } catch {
+        setError("Enter a known nickname or a valid wallet address");
+        return;
+      }
     }
+
     const amountNum = Number(amount);
     if (!amountNum || amountNum <= 0) {
       setError("Enter an amount greater than 0");
@@ -197,10 +208,10 @@ export const ChallengesPanel: FC<{ marketId: bigint; marketAddress: PublicKey; q
   return (
     <div>
       <div className="card" style={{ marginBottom: 14 }}>
-        <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>Challenge a friend — {question}</div>
+        <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>Challenge a friend: {question}</div>
 
-        <label className="field-label">Recipient wallet address</label>
-        <input value={recipient} onChange={(e) => setRecipient(e.target.value)} className="field" placeholder="Wallet address" />
+        <label className="field-label">Recipient (nickname or wallet address)</label>
+        <input value={recipient} onChange={(e) => setRecipient(e.target.value)} className="field" placeholder="nickname or address" />
 
         <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
           <div style={{ flex: 1 }}>
@@ -221,21 +232,22 @@ export const ChallengesPanel: FC<{ marketId: bigint; marketAddress: PublicKey; q
         </div>
 
         <button onClick={create} disabled={!connected || creating} className="btn btn-primary" style={{ width: "100%" }}>
-          {creating ? "Creating…" : "Create Challenge"}
+          {creating ? "Creating..." : "Create Challenge"}
         </button>
         {error && <div className="status-line status-error">{error}</div>}
       </div>
 
       {loading ? (
-        <div className="empty-note">Loading challenges…</div>
+        <div className="skeleton" style={{ height: 60 }} />
       ) : challenges.length === 0 ? (
-        <div className="empty-note">No challenges yet — create one above.</div>
+        <div className="empty-note">No challenges yet. Create one above.</div>
       ) : (
         challenges.map((row) => (
           <ChallengeItem
             key={row.pubkey.toBase58() + refreshKey}
             row={row}
             question={question}
+            displayName={displayName}
             onChanged={() => setRefreshKey((k) => k + 1)}
           />
         ))

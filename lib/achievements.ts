@@ -13,7 +13,7 @@ export interface Achievement {
   id: string;
   label: string;
   description: string;
-  icon: string;
+  icon: "target" | "check" | "flame" | "rocket" | "medal" | "swords" | "trophy";
   check: (s: ProfileStats) => boolean;
 }
 
@@ -22,49 +22,49 @@ export const ACHIEVEMENTS: Achievement[] = [
     id: "first-prediction",
     label: "First Prediction",
     description: "Enter your first position on any market",
-    icon: "🎯",
+    icon: "target",
     check: (s) => s.totalTrades >= 1,
   },
   {
     id: "first-win",
     label: "First Win",
     description: "Win a resolved prediction",
-    icon: "✅",
+    icon: "check",
     check: (s) => s.wins >= 1,
   },
   {
     id: "hot-streak",
     label: "Hot Streak",
     description: "Reach a 3-win streak",
-    icon: "🔥",
+    icon: "flame",
     check: (s) => s.bestStreak >= 3,
   },
   {
     id: "on-fire",
     label: "On Fire",
     description: "Reach a 5-win streak",
-    icon: "🚀",
+    icon: "rocket",
     check: (s) => s.bestStreak >= 5,
   },
   {
     id: "veteran-trader",
     label: "Veteran Trader",
     description: "Enter 10 or more positions",
-    icon: "🎖️",
+    icon: "medal",
     check: (s) => s.totalTrades >= 10,
   },
   {
     id: "challenger",
     label: "Challenger",
     description: "Take part in a Head-to-Head challenge",
-    icon: "⚔️",
+    icon: "swords",
     check: (s) => s.challengesPlayed >= 1,
   },
   {
     id: "champion",
     label: "Champion",
     description: "Win a Head-to-Head challenge",
-    icon: "🏆",
+    icon: "trophy",
     check: (s) => s.challengesWon >= 1,
   },
 ];

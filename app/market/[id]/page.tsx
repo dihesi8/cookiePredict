@@ -59,9 +59,11 @@ export default function MarketDetailPage() {
   }
 
   return (
-    <main className="page">
+    <>
       <NavBar />
-      <MarketDetailBody id={id} />
-    </main>
+      <main className="page">
+        <MarketDetailBody id={id} />
+      </main>
+    </>
   );
 }

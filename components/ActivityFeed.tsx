@@ -26,13 +26,13 @@ export const ActivityFeed: FC<{ questionByMarket: Record<string, string> }> = ({
 
     switch (event.name) {
       case "MarketCreated":
-        return `New market seeded — ${q}`;
+        return `New market seeded: ${q}`;
       case "PositionEntered":
         return `${shortAddr(event.user.toBase58())} entered ${event.side ? "YES" : "NO"} on ${q} (${(
           Number(event.amount) / 1e9
         ).toFixed(2)} COOK)`;
       case "MarketResolved":
-        return `Resolved ${event.outcome ? "YES" : "NO"} — ${q}`;
+        return `Resolved ${event.outcome ? "YES" : "NO"} for ${q}`;
       case "WinningsClaimed":
         return `${shortAddr(event.user.toBase58())} claimed ${(Number(event.amount) / 1e9).toFixed(2)} COOK on ${q}`;
     }
@@ -47,7 +47,7 @@ export const ActivityFeed: FC<{ questionByMarket: Record<string, string> }> = ({
         RECENT ACTIVITY
       </div>
       {items.length === 0 ? (
-        <div className="empty-note">No on-chain activity yet — trade or resolve a market to see it here.</div>
+        <div className="empty-note">No on-chain activity yet. Trade or resolve a market to see it here.</div>
       ) : (
         items.map((item, i) => (
           <div
@@ -80,7 +80,7 @@ export const ActivityFeed: FC<{ questionByMarket: Record<string, string> }> = ({
         ))
       )}
       <div style={{ fontSize: 10.5, color: "var(--text-faint)", marginTop: 10, paddingTop: 10, borderTop: "1px solid var(--border-soft)" }}>
-        Polled from on-chain program logs every few seconds — no indexer.
+        Polled from on-chain program logs every few seconds, no indexer.
       </div>
     </div>
   );

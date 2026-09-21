@@ -5,7 +5,7 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { decodeMarket, MarketAccount, marketPda } from "../lib/program";
 
-const POLL_MS = 4000;
+const POLL_MS = 12000;
 
 export function useMarket(marketId: bigint) {
   const { connection } = useConnection();

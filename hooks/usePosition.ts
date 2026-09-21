@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { decodePosition, PositionAccount, positionPda } from "../lib/program";
 
-const POLL_MS = 4000;
+const POLL_MS = 12000;
 
 export function usePosition(market: import("@solana/web3.js").PublicKey | null) {
   const { connection } = useConnection();

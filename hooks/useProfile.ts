@@ -7,7 +7,7 @@ import { decodeMarket, getUserChallenges, getUserPositions, MarketAccount } from
 import { computeBestStreak, computeStreak, ResolvedResult } from "../lib/streak";
 import { ProfileStats } from "../lib/achievements";
 
-const POLL_MS = 8000;
+const POLL_MS = 18000;
 
 export function useProfile() {
   const { connection } = useConnection();

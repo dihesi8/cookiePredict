@@ -32,6 +32,13 @@ export class BinaryWriter {
     this.chunks.push(b);
     return this;
   }
+  string(s: string) {
+    const utf8 = Buffer.from(s, "utf8");
+    const len = Buffer.alloc(4);
+    len.writeUInt32LE(utf8.length);
+    this.chunks.push(len, utf8);
+    return this;
+  }
   toBuffer() {
     return Buffer.concat(this.chunks);
   }
@@ -72,5 +79,12 @@ export class BinaryReader {
     const tag = this.u8();
     if (tag === 0) return null;
     return this.bool();
+  }
+  string(): string {
+    const len = this.buf.readUInt32LE(this.offset);
+    this.offset += 4;
+    const s = this.buf.subarray(this.offset, this.offset + len).toString("utf8");
+    this.offset += len;
+    return s;
   }
 }

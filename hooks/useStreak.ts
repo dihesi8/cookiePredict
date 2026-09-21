@@ -6,7 +6,7 @@ import { PublicKey } from "@solana/web3.js";
 import { decodeMarket, getUserPositions } from "../lib/program";
 import { computeStreak, multiplierForStreak, ResolvedResult } from "../lib/streak";
 
-const POLL_MS = 6000;
+const POLL_MS = 15000;
 
 export function useStreak() {
   const { connection } = useConnection();

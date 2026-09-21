@@ -1,6 +1,7 @@
 "use client";
 
 import { FC } from "react";
+import { Flame } from "lucide-react";
 import { useStreak } from "../hooks/useStreak";
 import { multiplierForStreak } from "../lib/streak";
 
@@ -16,8 +17,8 @@ export const StreakWidget: FC = () => {
         YOUR STREAK
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-        <span style={{ fontSize: 20 }}>🔥</span>
-        <span style={{ fontSize: 26, fontWeight: 700 }}>{loading ? "…" : streak}</span>
+        <Flame size={20} color="var(--gold)" />
+        <span style={{ fontSize: 26, fontWeight: 700 }}>{loading ? "..." : streak}</span>
         <span
           style={{
             marginLeft: "auto",
@@ -46,7 +47,7 @@ export const StreakWidget: FC = () => {
         ))}
       </div>
       <div style={{ fontSize: 10.5, color: "var(--text-faint)" }}>
-        Next win → {nextMultiplier.toFixed(2)}x
+        Next win: {nextMultiplier.toFixed(2)}x
       </div>
     </div>
   );

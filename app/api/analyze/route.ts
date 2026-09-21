@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Supports either provider via env vars — both expose an OpenAI-compatible
+// Supports either provider via env vars. Both expose an OpenAI-compatible
 // /chat/completions endpoint, so the request shape is identical.
 const PROVIDERS = {
   openrouter: {
@@ -27,7 +27,7 @@ object (no markdown fences, no commentary) matching exactly this shape:
   "estimatedProbabilityYes": 0-100 integer,
   "confidence": "low" | "medium" | "high"
 }
-You do not have live news or search access — reason only from general knowledge and the
+You do not have live news or search access. Reason only from general knowledge and the
 question itself. Never claim certainty. This is informational only, not financial advice.`;
 
 export async function POST(req: NextRequest) {
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     const apiKey = process.env[provider.keyEnv];
     if (!apiKey) {
       return NextResponse.json(
-        { error: `${provider.keyEnv} is not set on the server — add it to .env.local` },
+        { error: `${provider.keyEnv} is not set on the server. Add it to .env.local` },
         { status: 500 }
       );
     }

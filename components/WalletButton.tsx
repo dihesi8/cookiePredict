@@ -3,9 +3,10 @@
 import { FC, useEffect, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { CheckCircle2, XCircle, ArrowUpRight } from "lucide-react";
 
 const BRIDGE_URL = "https://hyperlane.cookiescan.io";
-const LOW_BALANCE_THRESHOLD = 0.05; // COOK — below this, nudge toward the bridge
+const LOW_BALANCE_THRESHOLD = 0.05; // COOK - below this, nudge toward the bridge
 
 export const WalletButton: FC = () => {
   const { connection } = useConnection();
@@ -35,13 +36,24 @@ export const WalletButton: FC = () => {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
       <WalletMultiButton />
-      <div style={{ fontSize: 11.5, color: "var(--text-faint)" }}>
-        RPC: {rpcOk === null ? "checking…" : rpcOk ? "connected ✅" : "unreachable ❌"}
+      <div className="icon-row" style={{ fontSize: 11.5, color: "var(--text-faint)" }}>
+        RPC:
+        {rpcOk === null ? (
+          "checking..."
+        ) : rpcOk ? (
+          <span className="icon-row" style={{ color: "var(--yes)" }}>
+            <CheckCircle2 size={12} /> connected
+          </span>
+        ) : (
+          <span className="icon-row" style={{ color: "var(--no)" }}>
+            <XCircle size={12} /> unreachable
+          </span>
+        )}
       </div>
       {connected && publicKey && (
         <div style={{ fontSize: 12.5, color: "var(--text-dim)" }}>
-          <div>{publicKey.toBase58().slice(0, 6)}…{publicKey.toBase58().slice(-4)}</div>
-          <div>{balance === null ? "…" : `${balance.toFixed(4)} SOL/COOK`}</div>
+          <div>{publicKey.toBase58().slice(0, 6)}...{publicKey.toBase58().slice(-4)}</div>
+          <div>{balance === null ? "..." : `${balance.toFixed(4)} SOL/COOK`}</div>
         </div>
       )}
 
@@ -50,10 +62,10 @@ export const WalletButton: FC = () => {
           href={BRIDGE_URL}
           target="_blank"
           rel="noreferrer"
-          className="btn btn-gold"
-          style={{ textAlign: "center", textDecoration: "none", fontSize: 12.5, padding: "8px 12px" }}
+          className="btn btn-gold icon-row"
+          style={{ textAlign: "center", textDecoration: "none", fontSize: 12.5, padding: "8px 12px", justifyContent: "center" }}
         >
-          Low on gas — bridge SOL → COOK →
+          Low on gas, bridge SOL to COOK <ArrowUpRight size={13} />
         </a>
       )}
     </div>

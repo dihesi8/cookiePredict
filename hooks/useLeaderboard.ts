@@ -6,7 +6,7 @@ import { PublicKey } from "@solana/web3.js";
 import { decodeMarket, getAllPositions } from "../lib/program";
 import { computeLeaderboard, LeaderboardEntry } from "../lib/leaderboard";
 
-const POLL_MS = 8000;
+const POLL_MS = 20000;
 const TOP_N = 10;
 
 export function useLeaderboard() {

@@ -8,14 +8,16 @@ const PortfolioCard = dynamic(() => import("../../components/PortfolioCard").the
 
 export default function PortfolioPage() {
   return (
-    <main className="page">
+    <>
       <NavBar />
-      <div className="section-title">Your Portfolio</div>
-      <div className="card-row">
-        {MARKETS.map((m) => (
-          <PortfolioCard key={m.id.toString()} marketId={m.id} question={m.question} />
-        ))}
-      </div>
-    </main>
+      <main className="page">
+        <div className="section-title">Your Portfolio</div>
+        <div className="card-row">
+          {MARKETS.map((m) => (
+            <PortfolioCard key={m.id.toString()} marketId={m.id} question={m.question} />
+          ))}
+        </div>
+      </main>
+    </>
   );
 }

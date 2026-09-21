@@ -62,7 +62,7 @@ export const TradePanel: FC<{ marketId: bigint; question: string }> = ({
       {loading ? (
         <div className="empty-note">Loading market…</div>
       ) : !market ? (
-        <div className="empty-note">Market not found on-chain yet — seed it from /admin first.</div>
+        <div className="empty-note">Market not found on-chain yet. Seed it from /admin first.</div>
       ) : (
         <>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>

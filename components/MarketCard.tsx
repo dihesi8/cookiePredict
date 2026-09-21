@@ -19,6 +19,7 @@ export const MarketCard: FC<{ meta: MarketMeta }> = ({ meta }) => {
         {market && <span className="tag tag-resolved">{market.status}</span>}
       </div>
       <div className="question" style={{ marginBottom: loading || !market ? 0 : 8 }}>{meta.question}</div>
+      {loading && <div className="skeleton" style={{ height: 22 }} />}
       {!loading && market && (
         <>
           <div className="prob-bar">

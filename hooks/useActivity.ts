@@ -5,8 +5,9 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import { PROGRAM_ID } from "../lib/program";
 import { extractEventsFromLogs, ProgramEvent } from "../lib/events";
 
-const POLL_MS = 5000;
+const POLL_MS = 10000;
 const MAX_ITEMS = 15;
+const MAX_FETCH_PER_POLL = 5; // spread a large backlog across cycles instead of bursting
 
 export interface FeedItem {
   signature: string;
@@ -25,7 +26,7 @@ export function useActivityFeed() {
     async function poll() {
       try {
         const sigs = await connection.getSignaturesForAddress(PROGRAM_ID, { limit: MAX_ITEMS });
-        const fresh = sigs.filter((s) => !seenSigs.current.has(s.signature));
+        const fresh = sigs.filter((s) => !seenSigs.current.has(s.signature)).slice(0, MAX_FETCH_PER_POLL);
         if (fresh.length === 0) return;
 
         const newItems: FeedItem[] = [];
