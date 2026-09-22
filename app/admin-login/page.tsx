@@ -53,7 +53,6 @@ export default function AdminLoginPage() {
           {error && <div className="status-line status-error">{error}</div>}
         </form>
       </div>
-      <h3 style={{ fontSize: 13, fontWeight: 650, marginTop: 30 }}>Password for testing 12345</h3>
       <p style={{ fontSize: 11, color: "var(--text-faint)", marginTop: 10 }}>
         This gate only hides the admin page from casual visitors. The real protection is
         on-chain: only the wallet that seeded a market can resolve it, enforced by the
