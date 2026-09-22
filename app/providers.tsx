@@ -7,6 +7,7 @@ import {
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { NightlyWalletAdapter } from "@solana/wallet-adapter-nightly";
+import { Background3D } from "../components/Background3D";
 
 // Cookie Chain is SVM/Solana-compatible, so the standard wallet-adapter
 // stack works as-is — we just point the connection at Cookie Chain's RPC
@@ -20,7 +21,10 @@ export const Providers: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <ConnectionProvider endpoint={COOKIE_CHAIN_RPC}>
       <WalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>{children}</WalletModalProvider>
+        <WalletModalProvider>
+          <Background3D />
+          {children}
+        </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
   );

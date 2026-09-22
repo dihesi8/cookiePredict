@@ -4,18 +4,39 @@ import { NextRequest, NextResponse } from "next/server";
 // /chat/completions endpoint, so the request shape is identical.
 const PROVIDERS = {
   openrouter: {
-    url: "https://openrouter.ai/api/v1/chat/completions",
+    chatUrl: "https://openrouter.ai/api/v1/chat/completions",
+    modelsUrl: "https://openrouter.ai/api/v1/models",
     keyEnv: "OPENROUTER_API_KEY",
-    defaultModel: "meta-llama/llama-3.1-8b-instruct:free",
   },
   nvidia: {
-    url: "https://integrate.api.nvidia.com/v1/chat/completions",
+    chatUrl: "https://integrate.api.nvidia.com/v1/chat/completions",
+    modelsUrl: "https://integrate.api.nvidia.com/v1/models",
     keyEnv: "NVIDIA_API_KEY",
-    defaultModel: "meta/llama-3.1-8b-instruct",
   },
 } as const;
 
 type ProviderName = keyof typeof PROVIDERS;
+
+// Resolves which model to use: an explicit AI_MODEL env var always wins;
+// otherwise ask the provider's own /models endpoint what's currently live,
+// rather than trusting a hardcoded model id that can go stale when a
+// provider retires a model (as happened here).
+async function resolveModel(provider: (typeof PROVIDERS)[ProviderName], apiKey: string): Promise<string> {
+  if (process.env.AI_MODEL) return process.env.AI_MODEL;
+
+  const res = await fetch(provider.modelsUrl, {
+    headers: { Authorization: `Bearer ${apiKey}` },
+  });
+  if (!res.ok) {
+    throw new Error(`Could not list available models (${res.status}). Set AI_MODEL explicitly in .env.local instead.`);
+  }
+  const data = await res.json();
+  const first = data?.data?.[0]?.id;
+  if (!first) {
+    throw new Error("Provider returned no models. Set AI_MODEL explicitly in .env.local instead.");
+  }
+  return first;
+}
 
 const SYSTEM_PROMPT = `You are a market analyst for a prediction market app. Given a YES/NO
 prediction market question and its current on-chain YES/NO split, respond with ONLY a JSON
@@ -51,13 +72,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const model = process.env.AI_MODEL || provider.defaultModel;
+    const model = await resolveModel(provider, apiKey);
 
     const userPrompt = `Question: ${question}
 Category: ${category ?? "Unknown"}
 Current on-chain odds: YES ${yesPct}% / NO ${noPct}%`;
 
-    const res = await fetch(provider.url, {
+    const res = await fetch(provider.chatUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

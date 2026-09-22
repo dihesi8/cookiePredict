@@ -67,9 +67,9 @@ a {
 }
 
 .section-title {
-  font-size: 15px;
-  font-weight: 650;
-  color: var(--text-dim);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
   margin-bottom: 12px;
   letter-spacing: 0.01em;
 }
@@ -94,7 +94,7 @@ a {
   margin-bottom: 4px;
 }
 .question {
-  font-size: 15px;
+  font-size: 16.5px;
   font-weight: 650;
   margin-bottom: 12px;
   line-height: 1.35;
@@ -299,9 +299,8 @@ a {
   position: sticky;
   top: 0;
   z-index: 30;
-  background: rgba(10, 14, 23, 0.92);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border-soft);
+  background: var(--bg);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.03) inset;
 }
 .header-inner {
   max-width: 960px;
@@ -334,23 +333,24 @@ a {
 .header-nav {
   display: flex;
   gap: 2px;
-  background: var(--panel);
-  border: 1px solid var(--border-soft);
-  border-radius: 10px;
-  padding: 3px;
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 4px;
   flex-wrap: wrap;
+  box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.5), inset -3px -3px 6px rgba(255, 255, 255, 0.025);
 }
 .header-nav a {
   font-size: 12px;
   font-weight: 600;
-  padding: 7px 12px;
-  border-radius: 8px;
+  padding: 8px 13px;
+  border-radius: 9px;
   color: var(--text-dim);
   text-decoration: none;
 }
 .header-nav a.active {
-  background: var(--accent);
-  color: #071022;
+  background: var(--bg);
+  color: var(--gold);
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5), -3px -3px 6px rgba(255, 255, 255, 0.03);
 }
 .header-right {
   margin-left: auto;
@@ -362,64 +362,91 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  background: var(--panel);
-  border: 1px solid var(--border-soft);
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--bg);
   color: var(--gold);
   font-size: 12px;
   font-weight: 700;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5), -3px -3px 6px rgba(255, 255, 255, 0.03);
 }
 
-/* ---------- Hero ---------- */
-.hero {
-  border: 1px solid var(--border-soft);
-  border-radius: 16px;
-  background: var(--panel);
-  padding: 32px 28px;
-  margin-bottom: 4px;
+/* ---------- Hero (full-bleed, video background) ---------- */
+.hero-full {
+  position: relative;
+  width: 100%;
+  min-height: 440px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  margin: -1px 0 0;
+}
+.hero-full video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+.hero-full .hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 14, 23, 0.74);
+  z-index: 1;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 64px 20px 56px;
+  width: 100%;
+  box-sizing: border-box;
 }
 .hero-kicker {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   color: var(--gold);
-  background: rgba(232, 161, 61, 0.1);
-  border: 1px solid rgba(232, 161, 61, 0.2);
-  padding: 5px 11px;
+  background: rgba(232, 161, 61, 0.12);
+  border: 1px solid rgba(232, 161, 61, 0.25);
+  padding: 6px 12px;
   border-radius: 20px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   text-transform: uppercase;
 }
-.hero h1 {
-  font-size: 30px;
-  font-weight: 750;
+.hero-content h1 {
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-weight: 780;
   letter-spacing: -0.02em;
-  line-height: 1.15;
-  margin: 0 0 12px;
+  line-height: 1.04;
+  margin: 0 0 16px;
+  color: var(--text);
 }
-.hero p {
+.hero-content p {
   color: var(--text-dim);
-  font-size: 14px;
+  font-size: 16px;
   max-width: 520px;
-  margin: 0 0 20px;
-  line-height: 1.5;
+  margin: 0 0 26px;
+  line-height: 1.55;
 }
 .hero-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 24px;
+  margin-bottom: 30px;
 }
 .stats-ribbon {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border-soft);
+  padding-top: 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  max-width: 460px;
 }
 .stats-ribbon .stat-label {
   font-size: 11px;
@@ -427,8 +454,8 @@ a {
   margin-bottom: 3px;
 }
 .stats-ribbon .stat-value {
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 19px;
+  font-weight: 750;
 }
 
 /* ---------- Search / filter bar ---------- */
