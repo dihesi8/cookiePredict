@@ -41,7 +41,8 @@ export const StreakWidget: FC = () => {
               flex: 1,
               height: 5,
               borderRadius: 3,
-              background: i < streak ? "var(--gold)" : "var(--border)",
+              background: i < streak ? "var(--gold)" : "var(--panel-2)",
+              border: "1px solid var(--border)",
             }}
           />
         ))}

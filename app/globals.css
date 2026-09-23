@@ -1,20 +1,21 @@
 :root {
-  --bg: #0a0e17;
-  --panel: #10151f;
-  --panel-2: #141b28;
-  --border: #202a3a;
-  --border-soft: #1a2230;
-  --text: #eef1f6;
-  --text-dim: #8b94a7;
-  --text-faint: #545e70;
-  --accent: #4d8dff;
-  --accent-soft: rgba(77, 141, 255, 0.12);
-  --yes: #2fb872;
-  --yes-bg: rgba(47, 184, 114, 0.1);
-  --no: #e5586b;
-  --no-bg: rgba(229, 88, 107, 0.1);
-  --gold: #e8a13d;
-  --radius: 10px;
+  --bg: #bfe3f5;
+  --panel: #fdf6e9;
+  --panel-2: #f4ecd9;
+  --border: #0b1220;
+  --border-soft: #0b1220;
+  --text: #0b1220;
+  --text-dim: #2c3646;
+  --text-faint: #5b6576;
+  --accent: #2f8fe0;
+  --accent-soft: rgba(47, 143, 224, 0.14);
+  --yes: #1f9d5c;
+  --yes-bg: rgba(31, 157, 92, 0.14);
+  --no: #d8465a;
+  --no-bg: rgba(216, 70, 90, 0.14);
+  --gold: #f2b53d;
+  --radius: 18px;
+  --border-w: 2.5px;
 }
 
 * {
@@ -22,7 +23,7 @@
 }
 
 body {
-  background: linear-gradient(180deg, #0a0e17 0%, #0d1220 55%, #0a0e17 100%);
+  background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
   margin: 0;
@@ -53,14 +54,15 @@ a {
   height: 32px;
   border-radius: 9px;
   background: var(--gold);
+  border: var(--border-w) solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1a1204;
+  color: var(--border);
 }
 .brand-name {
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.01em;
 }
 .brand-name span {
@@ -68,8 +70,8 @@ a {
 }
 
 .section-title {
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 800;
   color: var(--text);
   margin-bottom: 12px;
   letter-spacing: 0.01em;
@@ -77,9 +79,10 @@ a {
 
 .card {
   background: var(--panel);
-  border: 1px solid var(--border-soft);
+  border: var(--border-w) solid var(--border);
   border-radius: var(--radius);
   padding: 18px;
+  box-shadow: 4px 4px 0px var(--border);
 }
 
 .card-row {
@@ -91,22 +94,23 @@ a {
 .market-id {
   font-size: 11px;
   color: var(--text-faint);
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 4px;
 }
 .question {
   font-size: 16.5px;
-  font-weight: 650;
+  font-weight: 750;
   margin-bottom: 12px;
   line-height: 1.35;
 }
 
 .prob-bar {
-  height: 7px;
-  border-radius: 4px;
+  height: 9px;
+  border-radius: 6px;
   overflow: hidden;
   display: flex;
-  background: var(--border);
+  background: var(--panel-2);
+  border: 1.5px solid var(--border);
   margin-bottom: 8px;
 }
 .prob-bar .yes-fill {
@@ -119,6 +123,7 @@ a {
   display: flex;
   justify-content: space-between;
   font-size: 11.5px;
+  font-weight: 650;
   color: var(--text-dim);
   margin-bottom: 14px;
 }
@@ -127,10 +132,11 @@ a {
   width: 100%;
   padding: 10px 12px;
   background: var(--panel-2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  border: var(--border-w) solid var(--border);
+  border-radius: 10px;
   color: var(--text);
   font-size: 14px;
+  font-weight: 600;
   margin-bottom: 12px;
 }
 .amount-input:disabled {
@@ -144,43 +150,48 @@ a {
 }
 .btn {
   padding: 11px;
-  border-radius: 8px;
+  border-radius: 999px;
   font-size: 13.5px;
-  font-weight: 650;
-  border: none;
+  font-weight: 750;
+  border: var(--border-w) solid var(--border);
   cursor: pointer;
+  box-shadow: 3px 3px 0px var(--border);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--border);
 }
 .btn:disabled {
-  opacity: 0.4;
+  opacity: 0.45;
   cursor: not-allowed;
+  box-shadow: none;
 }
 .btn-yes {
   background: var(--yes-bg);
   color: var(--yes);
-  border: 1px solid rgba(47, 184, 114, 0.3);
 }
 .btn-no {
   background: var(--no-bg);
   color: var(--no);
-  border: 1px solid rgba(229, 88, 107, 0.3);
 }
 .btn-primary {
   background: var(--accent);
-  color: #071022;
+  color: #fff;
 }
 .btn-gold {
   background: var(--gold);
-  color: #1a1204;
+  color: var(--border);
 }
 .btn-ghost {
-  background: transparent;
-  border: 1px solid var(--border);
+  background: var(--panel);
   color: var(--text);
 }
 
 .status-line {
   margin-top: 12px;
   font-size: 12.5px;
+  font-weight: 600;
 }
 .status-pending {
   color: var(--text-dim);
@@ -197,10 +208,11 @@ a {
 
 .tag {
   font-size: 11px;
-  font-weight: 650;
-  padding: 3px 9px;
+  font-weight: 750;
+  padding: 3px 10px;
   border-radius: 20px;
   display: inline-block;
+  border: 1.5px solid var(--border);
 }
 .tag-open {
   background: var(--accent-soft);
@@ -209,7 +221,6 @@ a {
 .tag-resolved {
   background: var(--panel-2);
   color: var(--text-dim);
-  border: 1px solid var(--border);
 }
 .tag-won {
   background: var(--yes-bg);
@@ -222,8 +233,9 @@ a {
 
 .empty-note {
   font-size: 12.5px;
+  font-weight: 600;
   color: var(--text-faint);
-  border: 1px dashed var(--border);
+  border: 2px dashed var(--border);
   border-radius: var(--radius);
   padding: 14px;
 }
@@ -231,6 +243,7 @@ a {
 .field-label {
   display: block;
   font-size: 12px;
+  font-weight: 700;
   color: var(--text-dim);
   margin-bottom: 5px;
 }
@@ -238,10 +251,11 @@ a {
   width: 100%;
   padding: 9px 11px;
   background: var(--panel-2);
-  border: 1px solid var(--border);
-  border-radius: 7px;
+  border: var(--border-w) solid var(--border);
+  border-radius: 10px;
   color: var(--text);
   font-size: 13.5px;
+  font-weight: 600;
   margin-bottom: 16px;
 }
 
@@ -254,7 +268,8 @@ a {
 
 .skeleton {
   background: var(--panel-2);
-  border-radius: 6px;
+  border: var(--border-w) solid var(--border);
+  border-radius: 10px;
   position: relative;
   overflow: hidden;
 }
@@ -262,7 +277,7 @@ a {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+  background: linear-gradient(90deg, transparent, rgba(11, 18, 32, 0.06), transparent);
   animation: skeleton-sweep 1.4s ease-in-out infinite;
 }
 @keyframes skeleton-sweep {
@@ -281,7 +296,7 @@ a {
   height: 28px;
   border-radius: 50%;
   background: var(--panel-2);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -301,7 +316,7 @@ a {
   top: 0;
   z-index: 30;
   background: var(--bg);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+  border-bottom: var(--border-w) solid var(--border);
 }
 .header-inner {
   max-width: 960px;
@@ -324,8 +339,8 @@ a {
   height: 30px;
 }
 .header-logo-text {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 800;
   letter-spacing: -0.01em;
 }
 .header-logo-text span {
@@ -334,24 +349,24 @@ a {
 .header-nav {
   display: flex;
   gap: 2px;
-  background: var(--bg);
-  border-radius: 12px;
+  background: var(--panel);
+  border: var(--border-w) solid var(--border);
+  border-radius: 999px;
   padding: 4px;
   flex-wrap: wrap;
-  box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.5), inset -3px -3px 6px rgba(255, 255, 255, 0.025);
+  box-shadow: 3px 3px 0px var(--border);
 }
 .header-nav a {
   font-size: 12px;
-  font-weight: 600;
-  padding: 8px 13px;
-  border-radius: 9px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 999px;
   color: var(--text-dim);
   text-decoration: none;
 }
 .header-nav a.active {
-  background: var(--bg);
-  color: var(--gold);
-  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5), -3px -3px 6px rgba(255, 255, 255, 0.03);
+  background: var(--gold);
+  color: var(--border);
 }
 .header-right {
   margin-left: auto;
@@ -364,12 +379,13 @@ a {
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  border-radius: 10px;
-  background: var(--bg);
+  border-radius: 999px;
+  background: var(--panel);
+  border: var(--border-w) solid var(--border);
   color: var(--gold);
   font-size: 12px;
-  font-weight: 700;
-  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5), -3px -3px 6px rgba(255, 255, 255, 0.03);
+  font-weight: 800;
+  box-shadow: 3px 3px 0px var(--border);
 }
 
 /* ---------- Hero (full-bleed, video background) ---------- */
@@ -381,6 +397,7 @@ a {
   display: flex;
   align-items: center;
   margin: -1px 0 0;
+  border-bottom: var(--border-w) solid var(--border);
 }
 .hero-full video {
   position: absolute;
@@ -410,11 +427,11 @@ a {
   align-items: center;
   gap: 6px;
   font-size: 11.5px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.05em;
-  color: var(--gold);
-  background: rgba(232, 161, 61, 0.12);
-  border: 1px solid rgba(232, 161, 61, 0.25);
+  color: var(--border);
+  background: var(--gold);
+  border: 1.5px solid var(--border);
   padding: 6px 12px;
   border-radius: 20px;
   margin-bottom: 20px;
@@ -422,14 +439,14 @@ a {
 }
 .hero-content h1 {
   font-size: clamp(2.4rem, 6vw, 4rem);
-  font-weight: 780;
+  font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.04;
   margin: 0 0 16px;
-  color: var(--text);
+  color: #fff;
 }
 .hero-content p {
-  color: var(--text-dim);
+  color: rgba(255, 255, 255, 0.82);
   font-size: 16px;
   max-width: 520px;
   margin: 0 0 26px;
@@ -446,17 +463,18 @@ a {
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   padding-top: 22px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.25);
   max-width: 460px;
 }
 .stats-ribbon .stat-label {
   font-size: 11px;
-  color: var(--text-faint);
+  color: rgba(255, 255, 255, 0.6);
   margin-bottom: 3px;
 }
 .stats-ribbon .stat-value {
   font-size: 19px;
-  font-weight: 750;
+  font-weight: 800;
+  color: #fff;
 }
 
 /* ---------- Search / filter bar ---------- */
@@ -465,12 +483,13 @@ a {
   align-items: center;
   gap: 8px;
   background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 9px 13px;
+  border: var(--border-w) solid var(--border);
+  border-radius: 999px;
+  padding: 9px 15px;
   color: var(--text-faint);
   flex: 1;
   min-width: 200px;
+  box-shadow: 3px 3px 0px var(--border);
 }
 .search-bar input {
   background: none;
@@ -478,6 +497,7 @@ a {
   outline: none;
   color: var(--text);
   font-size: 13px;
+  font-weight: 600;
   flex: 1;
 }
 .search-bar input::placeholder {
@@ -500,16 +520,17 @@ a {
 .data-table thead th {
   text-align: left;
   font-size: 10.5px;
-  font-weight: 650;
+  font-weight: 800;
   color: var(--text-faint);
   text-transform: uppercase;
   letter-spacing: 0.03em;
   padding: 10px 12px;
-  border-bottom: 1px solid var(--border-soft);
+  border-bottom: var(--border-w) solid var(--border);
 }
 .data-table tbody td {
   padding: 11px 12px;
-  border-bottom: 1px solid var(--border-soft);
+  border-bottom: 1.5px solid var(--panel-2);
+  font-weight: 600;
 }
 .data-table tbody tr:last-child td {
   border-bottom: none;
