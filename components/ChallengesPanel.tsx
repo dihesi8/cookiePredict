@@ -163,7 +163,7 @@ export const ChallengesPanel: FC<{ marketId: bigint; marketAddress: PublicKey; q
 
   const [recipient, setRecipient] = useState("");
   const [side, setSide] = useState(true);
-  const [amount, setAmount] = useState("1");
+  const [amount, setAmount] = useState("");
   const [days, setDays] = useState("3");
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);

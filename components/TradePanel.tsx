@@ -83,7 +83,7 @@ export const TradePanel: FC<{ marketId: bigint; question: string }> = ({
           <input
             type="number"
             min="0"
-            step="0.1"
+            step="10"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             disabled={status.kind === "pending"}
