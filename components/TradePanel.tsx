@@ -16,7 +16,7 @@ export const TradePanel: FC<{ marketId: bigint; question: string }> = ({
   const { publicKey, sendTransaction, connected } = useWallet();
   const { market, marketAddress, loading } = useMarket(marketId);
 
-  const [amount, setAmount] = useState("1");
+  const [amount, setAmount] = useState("");
   const [status, setStatus] = useState<
     { kind: "idle" } | { kind: "pending" } | { kind: "error"; msg: string } | { kind: "success"; sig: string }
   >({ kind: "idle" });
